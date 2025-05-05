@@ -1,8 +1,9 @@
 from schemas.users import UserRequest, UserResponse
 from sqlalchemy.exc import IntegrityError
 from models.users import User as UserModel
-from fastapi import HTTPException
+from fastapi import HTTPException, UploadFile
 from loguru import logger
+import pandas as pd
 
 class UserService:
     def __init__(self, db):
@@ -61,3 +62,46 @@ class UserService:
         
         resp = [UserResponse(name=user.name, age=user.age) for user in users]
         return resp
+    
+    def create_user_via_csv(self, file: UploadFile) -> UserResponse:
+        if not file.filename.endswith('.csv'):
+            raise HTTPException(status_code=400, detail="Only CSV files are accepted.")
+
+        try:
+            df = pd.read_csv(file.file)
+        except Exception as e:
+            raise HTTPException(status_code=400, detail=f"Can not parse CSV: {e}")
+
+        created_users = []
+        skipped_users = []
+
+        for index, row in df.iterrows():
+            name = row.get("Name", "").strip()
+            age = row.get("Age")
+
+            if not name:
+                logger.warning(f"Row {index} has empty name, skipping.")
+                skipped_users.append({"row": index, "reason": "Empty name"})
+                continue
+
+            try:
+                new_user = UserModel(name=name, age=age)
+                self.db.add(new_user)
+                self.db.commit()
+                self.db.refresh(new_user)
+                logger.info(f"User created: {new_user.name}, {new_user.age}")
+                created_users.append(name)
+            except IntegrityError:
+                self.db.rollback()
+                logger.warning(f"User already exists: {name}, skipping.")
+                skipped_users.append({"name": name, "reason": "Duplicate name"})
+            except Exception as e:
+                self.db.rollback()
+                logger.error(f"Error creating user {name}: {e}")
+                skipped_users.append({"name": name, "reason": str(e)})
+
+        return {
+            "created": created_users,
+            "skipped": skipped_users,
+            "message": f"{len(created_users)} users created, {len(skipped_users)} skipped."
+        }
