@@ -17,3 +17,12 @@ def create_user(r: UserRequest, db: Session = Depends(get_db)):
     
     return response
 
+@router.delete("/names/{username}", response_model=UserResponse)
+def delete_user(username: str, db: Session = Depends(get_db)):
+    """
+    Delete a user by username.
+    """
+    response = UserService(db).delete_user_by_username(username)
+    
+    return response
+

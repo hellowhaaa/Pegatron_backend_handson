@@ -29,3 +29,24 @@ class UserService:
         resp = UserResponse(**r.model_dump())
         
         return resp
+    
+    def delete_user_by_username(self, username: str):
+        user = self.db.query(UserModel).filter(UserModel.name == username).first()
+        
+        # Check if user exists
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        try:
+            self.db.delete(user)
+            self.db.commit()
+        except Exception as e:
+            self.db.rollback()
+            logger.error(f"Error deleting user: {e}")
+        
+        resp = UserResponse(
+            name=user.name,
+            age=user.age
+        )
+        
+        return resp
