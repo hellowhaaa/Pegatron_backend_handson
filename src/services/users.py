@@ -30,7 +30,7 @@ class UserService:
         
         return resp
     
-    def delete_user_by_username(self, username: str):
+    def delete_user_by_username(self, username: str) -> UserResponse:
         user = self.db.query(UserModel).filter(UserModel.name == username).first()
         
         # Check if user exists
