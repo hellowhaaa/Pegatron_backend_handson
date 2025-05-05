@@ -26,3 +26,11 @@ def delete_user(username: str, db: Session = Depends(get_db)):
     
     return response
 
+@router.get("/", response_model=list[UserResponse])
+def list_users(db: Session = Depends(get_db)):
+    """
+    List all users.
+    """
+    response = UserService(db).get_all_users()
+    
+    return response

@@ -50,3 +50,14 @@ class UserService:
         )
         
         return resp
+    
+    def get_all_users(self) -> list[UserResponse]:
+        try:
+            users = self.db.query(UserModel).all()
+        except Exception as e:
+            self.db.rollback()
+            logger.error(f"Error retrieving users: {e}")
+            raise HTTPException(status_code=500, detail="Error retrieving users")
+        
+        resp = [UserResponse(name=user.name, age=user.age) for user in users]
+        return resp
