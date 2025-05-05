@@ -1,17 +1,19 @@
 
-from fastapi import APIRouter
-from schemas.users import UserRequest
+from fastapi import APIRouter, Depends
+from schemas.users import UserRequest, UserResponse
 from services.users import UserService
+from sqlalchemy.orm import Session
+from core.database import get_db
 
 router = APIRouter()
 
 
-@router.post("/")
-def create_user(r: UserRequest):
+@router.post("/", response_model=UserResponse)
+def create_user(r: UserRequest, db: Session = Depends(get_db)):
     """
     Create a new user.
     """
-    response = UserService().create_user(r)
+    response = UserService(db).create_user(r)
     
     return response
 
