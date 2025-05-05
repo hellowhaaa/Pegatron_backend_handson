@@ -8,7 +8,7 @@ class UserService:
     def __init__(self, db):
         self.db = db
         
-    def create_user(self, r: UserRequest):
+    def create_user(self, r: UserRequest) -> UserResponse:
         new_user = UserModel(**r.model_dump())
         try:
             
