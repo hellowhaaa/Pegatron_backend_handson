@@ -49,12 +49,3 @@ def list_users(db: Session = Depends(get_db)):
     """
     response = UserService(db).get_average_age_grouped_by_first_char()
     return response
-    
-@router.post("/upload-csv/")
-def upload_csv(file: UploadFile, db: Session = Depends(get_db)):
-    """
-    Upload and parse a CSV file.
-    """
-    resp = UserService(db).create_user_via_csv(file)
-    
-    return resp
