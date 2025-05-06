@@ -1,6 +1,6 @@
 from fastapi import FastAPI
-from core.database import Base, engine
-from routes import router
+from src.core.database import Base, engine
+from src.routes import router
 from loguru import logger
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
@@ -35,4 +35,4 @@ async def internal_exception_handler(request, exc: Exception):
     
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("app:app", host="0.0.0.0", port=9000, reload=True)
+    uvicorn.run("src.app:app", host="0.0.0.0", port=8000, reload=True, reload_dirs="src")

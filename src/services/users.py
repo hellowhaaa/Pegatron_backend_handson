@@ -1,6 +1,6 @@
-from schemas.users import UserRequest, UserResponse, CSVUserResponse, CSVUser
+from src.schemas.users import UserRequest, UserResponse, CSVUserResponse, CSVUser
 from sqlalchemy.exc import IntegrityError
-from models.users import User as UserModel
+from src.models.users import User as UserModel
 from fastapi import HTTPException, UploadFile
 from loguru import logger
 import pandas as pd

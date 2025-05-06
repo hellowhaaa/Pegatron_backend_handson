@@ -1,9 +1,9 @@
 
 from fastapi import APIRouter, Depends, UploadFile, UploadFile
-from schemas.users import UserRequest, UserResponse, AverageAgeResponse, CSVUserResponse
-from services.users import UserService
+from src.schemas.users import UserRequest, UserResponse, AverageAgeResponse, CSVUserResponse
+from src.services.users import UserService
 from sqlalchemy.orm import Session
-from core.database import get_db
+from src.core.database import get_db
 
 router = APIRouter()
 
@@ -57,5 +57,4 @@ def upload_csv(file: UploadFile, db: Session = Depends(get_db)):
     """
     resp = UserService(db).create_user_via_csv(file)
     
-     
     return resp
