@@ -1,6 +1,6 @@
 
 from fastapi import APIRouter, Depends, UploadFile
-from schemas.users import UserRequest, UserResponse, AverageAgeResponse
+from schemas.users import UserRequest, UserResponse, AverageAgeResponse, CSVUserResponse
 from services.users import UserService
 from sqlalchemy.orm import Session
 from core.database import get_db
@@ -35,7 +35,7 @@ def list_users(db: Session = Depends(get_db)):
     response = UserService(db).get_all_users()
     return response
     
-@router.post("/upload-csv/")
+@router.post("/upload-csv", response_model=CSVUserResponse)
 def upload_csv(file: UploadFile, db: Session = Depends(get_db)):
     """
     Upload and parse a CSV file.
