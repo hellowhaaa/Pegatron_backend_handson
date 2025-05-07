@@ -10,6 +10,7 @@ class UserService:
         self.db = db
         
     def create_user(self, r: UserRequest) -> UserResponse:
+        
         new_user = UserModel(**r.model_dump())
         try:
             

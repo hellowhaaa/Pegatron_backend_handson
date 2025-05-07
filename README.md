@@ -64,6 +64,12 @@ API and API doc are now available at:
 - http://localhost:8000
 - http://localhost:8000/docs
 
+## Testing
+
+```bash
+pytest -vv
+```
+
 ## Folder Structure
 
 ```
